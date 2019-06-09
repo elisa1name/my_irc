@@ -25,7 +25,7 @@
 }
 
 .chatPage .activeUsers ul {
-  height: 40rem;
+  height: 30rem;
   overflow: scroll;
 }
 
@@ -33,6 +33,37 @@
   color: #5fdba7;
   font-size: 1rem;
   margin-right: 0.8rem;
+}
+
+.chatPage .roomList {
+  position: absolute;
+  width: 30rem;
+  top: 45rem;
+  left: 3rem;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.1);
+  padding: 2rem 2%;
+  z-index: 10;
+}
+
+.chatPage .roomList h2 {
+  font-size: 18px;
+}
+
+.chatPage .roomList ul {
+  height: 10rem;
+  overflow: scroll;
+}
+
+.chatPage .roomList ul, .chatPage .roomList ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.chatPage .roomList ul li i {
+  font-size: 0.9rem;
+  margin-right: 1rem;
 }
 
 .chatPage .messages_wrap {

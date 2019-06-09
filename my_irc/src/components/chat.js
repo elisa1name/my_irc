@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import io from 'socket.io-client';
 import ActiveUsers from '../components/activeUsers';
+import RoomList from '../components/roomList';
 import Messages from '../components/messages';
 import moment from 'moment';
 import '../Assets/chat.css';
@@ -11,7 +12,7 @@ var socket;
 const initialState = {
     users: [],
     messages: [],
-    rooms: [],
+    rooms: ["General", "Random"],
     newMsg: '',
 }
 
@@ -121,6 +122,18 @@ class Chat extends Component {
         this.clearForm();
     }
 
+    chatCommands(cmd, arg) {
+        switch(cmd) {
+            case 'nick':
+                var notice = this.props.match.params.name + "changed their name to " + arg;
+                socket.emit('send', { type: 'notice', message: notice });
+                break;
+
+                default:
+                  console.log("That is not a valid command.");
+        }
+    }
+
     render() {
 
         const { newMsg } = this.state;
@@ -129,6 +142,8 @@ class Chat extends Component {
             <div className="chatPage">
 
                 <ActiveUsers users={this.state.users} />
+
+                <RoomList rooms={this.state.rooms} />
 
                 <div className="messages_wrap">
 
