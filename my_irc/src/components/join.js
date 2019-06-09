@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import '../Assets/joinform.css';
+import '../Assets/default.css';
 
 const initialState = {
     name: '',

@@ -4,14 +4,15 @@ import io from 'socket.io-client';
 import ActiveUsers from '../components/activeUsers';
 import Messages from '../components/messages';
 import moment from 'moment';
-import LoadingScreen from 'react-loading-screen';
+import '../Assets/chat.css';
+import '../Assets/default.css';
 
 var socket;
 const initialState = {
     users: [],
     messages: [],
+    rooms: [],
     newMsg: '',
-    fetchingLocation: false
 }
 
 class Chat extends Component {
@@ -72,22 +73,6 @@ class Chat extends Component {
             }
         });
 
-        socket.on('createLocationMsg', (message) => {
-            var formattedTime = moment(message.createdDate).format('h:mm a');
-            let newMsg = {
-                url: message.url,
-                from: message.from,
-                room: message.room,
-                createdDate: formattedTime
-            }
-            let results = scopeThis.state.messages;
-            results.push(newMsg);
-            scopeThis.setState({
-                messages: results,
-                fetchingLocation: false
-            });
-        });
-
         socket.on('disconnect', function () {
             console.log('Connection lost from server.');
         });
@@ -136,39 +121,12 @@ class Chat extends Component {
         this.clearForm();
     }
 
-    sendLocation() {
-        this.setState({
-            fetchingLocation: true
-        });
-        if (!navigator.geolocation) {
-            return alert('GeoLocation not supported by your browser');
-        }
-        navigator.geolocation.getCurrentPosition((pos) => {
-            socket.emit('createLocationMsg', {
-                lat: pos.coords.latitude,
-                lon: pos.coords.longitude
-            });
-        }, () => {
-            alert('Unable to fetch location');
-        });
-    }
-
     render() {
 
         const { newMsg } = this.state;
 
         return (
             <div className="chatPage">
-
-                <LoadingScreen
-                    loading={this.state.fetchingLocation}
-                    bgColor='#F5F7F4'
-                    spinnerColor='#3597DE'
-                    textColor='#010000'
-                    text='Fetching your current location'
-                >
-                    <div className="hide"></div>
-                </LoadingScreen>
 
                 <ActiveUsers users={this.state.users} />
 
@@ -200,9 +158,6 @@ class Chat extends Component {
                                 <div className="btnWrap">
                                     <button type="submit" className="btn">
                                         <i className="fab fa-telegram-plane"></i>
-                                    </button>
-                                    <button id="send_location" className="btn" onClick={() => this.sendLocation()}>
-                                        <i className="far fa-compass"></i>
                                     </button>
                                 </div>
                             </form>

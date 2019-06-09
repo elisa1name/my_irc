@@ -3,7 +3,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 
-const { generateMessage, generateLocationMessage } = require('./utils/messages.js');
+const { generateMessage } = require('./utils/messages.js');
 const { isRealString } = require('./utils/validation.js');
 const { Users } = require('./utils/users.js');
 const publicPath = path.join(__dirname, '../public');
@@ -17,6 +17,8 @@ const io = socketIO(server);
 const users = new Users();
 
 io.on('connection', (socket) => {
+    console.log("SocketID: " + socket.id);
+
     socket.on('leave', (params) => {
             socket.leave(params.room);
         });
@@ -30,10 +32,11 @@ io.on('connection', (socket) => {
         socket.join(params.room);
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
+        console.log("Username: " + params.name);
 
         io.to(params.room).emit('updateUserList', users.getUserList(params.room));
-        socket.emit('newMessage', generateMessage('Admin', params.room, 'Welcome to the chat app.'));
-        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', params.room, `${params.name} has joined.`));
+        socket.emit('newMessage', generateMessage('ChatBot', params.room, 'Welcome to the ' + params.room + ' chat'));
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('ChatBot', params.room, `${params.name} has joined.`));
 
         callback();
     });
@@ -50,12 +53,14 @@ io.on('connection', (socket) => {
         callback();
     });
 
+    /*
     socket.on('createLocationMsg', (coords) => {
         var user = users.getUser(socket.id);
         if (user) {
             io.to(user.room).emit('createLocationMsg', generateLocationMessage(user.name, user.room, coords.lat, coords.lon));
         }
     });
+    */
 
     socket.on('disconnect', () => {
         var user = users.removeUser(socket.id);
